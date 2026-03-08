@@ -1,0 +1,477 @@
+/* 五子棋 - 中国古典风格样式 */
+
+/* ========== CSS 变量定义 ========== */
+:root {
+    /* 宣纸色系 */
+    --rice-paper: #f5f0e6;
+    --rice-paper-dark: #e8e0d0;
+    --ink-black: #1a1a1a;
+    --ink-gray: #4a4a4a;
+    --ink-light: #888888;
+    
+    /* 传统木色 */
+    --wood-dark: #5d4e37;
+    --wood-medium: #8b7355;
+    --wood-light: #d4c5b0;
+    
+    /* 传统中国色 */
+    --cinnabar: #c93756;
+    --indigo: #2c4f66;
+    --jade: #6b9080;
+    --gold: #c9a227;
+    
+    /* 棋子颜色 */
+    --black-stone: #1a1a1a;
+    --black-stone-highlight: #3a3a3a;
+    --white-stone: #f5f5f5;
+    --white-stone-shadow: #d0d0d0;
+    
+    /* 动画时间 */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* ========== 全局重置与基础样式 ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Noto Serif SC", "Source Han Serif SC", "SimSun", "STSong", serif;
+    background: var(--rice-paper);
+    color: var(--ink-black);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+/* ========== 游戏容器 ========== */
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* ========== 头部区域 ========== */
+.game-header {
+    text-align: center;
+    padding: 30px 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* 装饰边框 */
+.game-header::before,
+.game-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--wood-medium), 
+        var(--gold), 
+        var(--wood-medium), 
+        transparent
+    );
+}
+
+.game-header::before { top: 10px; }
+.game-header::after { bottom: 10px; }
+
+.game-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--ink-black);
+    letter-spacing: 0.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.game-subtitle {
+    font-size: 1.1rem;
+    color: var(--ink-gray);
+    font-style: italic;
+    letter-spacing: 0.2em;
+}
+
+/* ========== 主游戏区域 ========== */
+.game-main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 1;
+    padding: 20px 0;
+}
+
+/* ========== 棋盘容器 ========== */
+.board-container {
+    position: relative;
+    padding: 20px;
+    background: var(--wood-dark);
+    border-radius: 8px;
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+/* 木纹效果 */
+.board-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            rgba(0, 0, 0, 0.03) 4px
+        );
+    pointer-events: none;
+    border-radius: 8px;
+}
+
+#game-board {
+    display: block;
+    background: #e8c97a;
+    background-image: 
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+    border-radius: 4px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== 游戏信息面板 ========== */
+.game-info {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+/* 状态面板 */
+.status-panel {
+    background: linear-gradient(135deg, var(--rice-paper) 0%, var(--rice-paper-dark) 100%);
+    border: 1px solid var(--wood-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--wood-light);
+}
+
+.status-item:last-child {
+    border-bottom: none;
+}
+
+.status-label {
+    font-size: 0.95rem;
+    color: var(--ink-gray);
+    font-weight: 500;
+}
+
+.status-value {
+    font-size: 1rem;
+    color: var(--ink-black);
+    font-weight: 600;
+}
+
+/* ========== 玩家信息卡片 ========== */
+.player-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--rice-paper);
+    border-radius: 12px;
+    border: 2px solid var(--wood-light);
+}
+
+.player-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 10px;
+    border-radius: 8px;
+    transition: all var(--transition-normal);
+}
+
+.player-card:hover {
+    transform: translateY(-2px);
+}
+
+.player-black {
+    background: linear-gradient(135deg, #f5f0e6 0%, #e8e0d0 100%);
+    border: 1px solid var(--wood-light);
+}
+
+.player-white {
+    background: linear-gradient(135deg, #faf8f3 0%, #f0ebe0 100%);
+    border: 1px solid var(--wood-light);
+}
+
+.player-stone {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.player-black .player-stone {
+    background: radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a);
+    border: 1px solid #000;
+}
+
+.player-white .player-stone {
+    background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0);
+    border: 1px solid #ccc;
+}
+
+.player-name {
+    font-size: 0.85rem;
+    color: var(--ink-gray);
+    text-align: center;
+    font-weight: 500;
+}
+
+.player-score {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cinnabar);
+    font-family: "Noto Sans SC", sans-serif;
+}
+
+.vs-divider {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    padding: 0 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== 按钮样式 ========== */
+.game-controls {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--cinnabar) 0%, #a82e48 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(201, 55, 86, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(201, 55, 86, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--wood-medium) 0%, var(--wood-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 115, 85, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+.btn-text {
+    letter-spacing: 0.1em;
+}
+
+/* ========== 页脚 ========== */
+.game-footer {
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 20px;
+    color: var(--ink-gray);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    border-top: 1px solid var(--wood-light);
+}
+
+/* ========== 响应式设计 ========== */
+@media (max-width: 1024px) {
+    .game-main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .game-info {
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .board-container {
+        padding: 15px;
+    }
+
+    #game-board {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .game-title {
+        font-size: 2rem;
+        letter-spacing: 0.3em;
+    }
+
+    .game-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .player-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .vs-divider {
+        transform: rotate(90deg);
+        padding: 0;
+    }
+
+    .game-controls {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .status-panel {
+        padding: 15px;
+    }
+}
+
+/* ========== 动画关键帧 ========== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* 应用动画 */
+.game-header {
+    animation: fadeIn 0.8s ease-out;
+}
+
+.board-container {
+    animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.game-info {
+    animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+/* 获胜脉冲效果 */
+.winning-stone {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+/* 打印样式 */
+@media print {
+    body {
+        background: white;
+    }
+    
+    .game-controls,
+    .game-footer {
+        display: none;
+    }
+    
+    .board-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}
